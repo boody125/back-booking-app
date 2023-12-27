@@ -23,9 +23,9 @@ app.use('/uploads',express.static(__dirname+'/uploads'));
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-    allowedHeaders:'Access-Control-Allow-Origin',
+    
     credentials:true,
-    origin:'https://front-booking-app.vercel.app',
+    origin:"*",
     
 }));
 
