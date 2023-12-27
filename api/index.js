@@ -24,7 +24,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
     credentials:true,
-    origin:'https://front-booking-app.vercel.app/'
+    origin:'https://front-booking-app.vercel.app'
 }));
 
 const uri = process.env.MONGO_URL
