@@ -26,6 +26,7 @@ app.use(cors({
     
     credentials:true,
     origin:"https://front-booking-app.vercel.app",
+    allowedHeaders:"https://front-booking-app.vercel.app"
     
 }));
 
