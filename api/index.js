@@ -23,11 +23,8 @@ app.use('/uploads',express.static(__dirname+'/uploads'));
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-    
     credentials:true,
-    origin:"https://front-booking-app.vercel.app",
-    allowedHeaders:"https://front-booking-app.vercel.app"
-    
+    origin:true
 }));
 
 const uri = process.env.MONGO_URL
@@ -71,7 +68,7 @@ async function uploadToS3(path, originalFilename,mimetype){
 }
 
 app.get('/api/test',(req,res)=>{
-    res.json({message:"hello world"}).setHeader("Access-Control-Allow-Origin", "https://front-booking-app.vercel.app")
+    res.json({message:"hello world"})
 })
 
 
@@ -85,12 +82,12 @@ app.post('/api/register',async(req,res)=>{
             email,
             password:bcrypt.hashSync(password, bcryptSalt)
         });
-        res.json(userDoc).setHeader("Access-Control-Allow-Origin", "https://front-booking-app.vercel.app")
+        res.json(userDoc)
 
 
     } catch (error) {
         
-        res.status(422).json(error).setHeader("Access-Control-Allow-Origin", "https://front-booking-app.vercel.app")
+        res.status(422).json(error)
     }
     
 })
@@ -101,7 +98,7 @@ app.post('/api/login',async(req,res)=>{
     const userDoc =await User.findOne({email:email})
     
     if(!userDoc){
-        res.status(422).json({message:"email is incorrect"}).setHeader("Access-Control-Allow-Origin", "https://front-booking-app.vercel.app")
+        res.status(422).json({message:"email is incorrect"})
     }
     if(userDoc){
         
@@ -114,11 +111,11 @@ app.post('/api/login',async(req,res)=>{
                 process.env.JWTSECRET, 
                 {}, (err,token)=>{
                 if (err) throw err
-                res.cookie('token',token).json(userDoc).setHeader("Access-Control-Allow-Origin", "https://front-booking-app.vercel.app")
+                res.cookie('token',token).json(userDoc)
             })
             
         }else{
-            res.status(422).json({message:"password is incorrect"}).setHeader("Access-Control-Allow-Origin", "https://front-booking-app.vercel.app")
+            res.status(422).json({message:"password is incorrect"})
         }
     }
 })
@@ -132,14 +129,14 @@ app.get('/api/profile', async(req,res)=>{
         res.json(userData)
         
     }else{
-        res.status(401).json({message:"unauthorized"}).setHeader("Access-Control-Allow-Origin", "https://front-booking-app.vercel.app")
+        res.status(401).json({message:"unauthorized"})
     }  
 })
 
 
 app.post('/api/logout', (req,res)=>{
 
-    res.clearCookie('token').json(true).setHeader("Access-Control-Allow-Origin", "https://front-booking-app.vercel.app")
+    res.clearCookie('token').json(true)
 })
 
 
@@ -152,7 +149,7 @@ app.post('/api/upload-with-link',async (req,res)=>{
         dest:'/tmp/'+ name
     });
     const url = await uploadToS3('/tmp/'+ name, name, mime.lookup('/tmp/'+ name))
-    res.json(url).setHeader("Access-Control-Allow-Origin", "https://front-booking-app.vercel.app")
+    res.json(url)
 })
 
 const pictureMiddleware= multer({dest:'tmp'})
@@ -167,7 +164,7 @@ app.post('/api/upload',pictureMiddleware.array('pictures',100) ,async(req,res)=>
         
 
     }
-    res.json(uploads).setHeader("Access-Control-Allow-Origin", "https://front-booking-app.vercel.app")
+    res.json(uploads)
 })
 
 app.post("/api/place", (req,res)=>{
@@ -189,7 +186,7 @@ app.post("/api/place", (req,res)=>{
             description,perks,extraInfo,price,
             checkIn,checkOut,maxGuests
         })
-        res.json(placeDocs).setHeader("Access-Control-Allow-Origin", "https://front-booking-app.vercel.app")
+        res.json(placeDocs)
     })
     
 })
@@ -201,7 +198,7 @@ app.get('/api/user-places', (req,res)=>{
     jwt.verify(token,process.env.JWTSECRET,{},async(err,decoded)=>{
         const {id}= decoded;
         const places = await Place.find({owner:id})
-        res.json(places).setHeader("Access-Control-Allow-Origin", "https://front-booking-app.vercel.app")
+        res.json(places)
     })
 })
 
@@ -210,7 +207,7 @@ app.get('/api/user-places', (req,res)=>{
 app.get('/api/places/:id', async (req,res)=>{
     mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true} );
     const {id}= req.params
-    res.json(await Place.findById(id)).setHeader("Access-Control-Allow-Origin", "https://front-booking-app.vercel.app")
+    res.json(await Place.findById(id))
 })
 
 
@@ -232,7 +229,7 @@ app.put('/api/place',(req,res)=>{
             checkIn,checkOut,maxGuests
         })
    
-        res.json(placeDoc).setHeader("Access-Control-Allow-Origin", "https://front-booking-app.vercel.app")
+        res.json(placeDoc)
         
     })
 
@@ -243,13 +240,13 @@ app.delete('/api/place/:id',async(req,res)=>{
     const {id}= req.params
     console.log(id)
     const userData=await getUserDataFromCookies(req)
-    res.json(await Place.deleteOne({_id:id, owner:userData.id})).setHeader("Access-Control-Allow-Origin", "https://front-booking-app.vercel.app")
+    res.json(await Place.deleteOne({_id:id, owner:userData.id}))
 })
 
 
 app.get('/api/places',async(req,res)=>{
     mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true} );
-    res.json(await Place.find()).setHeader("Access-Control-Allow-Origin", "https://front-booking-app.vercel.app")
+    res.json(await Place.find())
 })
 
 
@@ -264,7 +261,7 @@ app.get('/api/room/:id', async (req,res)=>{
     }
 
     const place= await Place.findById(id)
-    res.json([place,dates]).setHeader("Access-Control-Allow-Origin", "https://front-booking-app.vercel.app")
+    res.json([place,dates])
 });
 
 
@@ -276,7 +273,7 @@ app.post('/api/booking',  async(req,res)=>{
 
     Booking.create({place,checkIn,checkOut,numberOfGuests,name,phone,price,user:userData.id
     }).then((doc)=>{
-        res.json(doc).setHeader("Access-Control-Allow-Origin", "https://front-booking-app.vercel.app")
+        res.json(doc)
     }).catch((err=>{
         console.error(err)
     }))
@@ -289,7 +286,7 @@ app.get('/api/bookings',  async (req,res)=>{
     
     const response= await Booking.find({user:userData.id}).populate('place')
     
-    res.json(response).setHeader("Access-Control-Allow-Origin", "https://front-booking-app.vercel.app")
+    res.json(response)
 
 })
 
@@ -299,7 +296,7 @@ app.delete('/api/booking/:id',async(req,res)=>{
     const {id}= req.params
     console.log(id)
     const userData=await getUserDataFromCookies(req)
-    res.json(await Booking.deleteOne({_id:id, user:userData.id})).setHeader("Access-Control-Allow-Origin", "https://front-booking-app.vercel.app")
+    res.json(await Booking.deleteOne({_id:id, user:userData.id}))
 })
 
 
