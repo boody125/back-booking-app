@@ -22,12 +22,7 @@ require('dotenv').config();
 app.use('/uploads',express.static(__dirname+'/uploads'));
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({
-    credentials:true,
-    origin:false,
-    
-}));
-
+app.use(cors({ origin: 'https://front-booking-app.vercel.app' , credentials :  true,  methods: 'GET,PUT,POST,OPTIONS,Delete', allowedHeaders: 'Content-Type,Authorization' }));
 const uri = process.env.MONGO_URL
 
 function getUserDataFromCookies (req){
@@ -39,6 +34,7 @@ function getUserDataFromCookies (req){
     });
     
 }
+
 
 
 
@@ -83,11 +79,20 @@ app.post('/api/register',async(req,res)=>{
             email,
             password:bcrypt.hashSync(password, bcryptSalt)
         });
+        res.setHeader('Access-Control-Allow-Origin', 'https://front-booking-app.vercel.app');
+
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
+
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
         res.json(userDoc)
 
 
     } catch (error) {
-        
+        res.setHeader('Access-Control-Allow-Origin', 'https://front-booking-app.vercel.app');
+
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
+
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
         res.status(422).json(error)
     }
     
@@ -99,6 +104,11 @@ app.post('/api/login',async(req,res)=>{
     const userDoc =await User.findOne({email:email})
     
     if(!userDoc){
+        res.setHeader('Access-Control-Allow-Origin', 'https://front-booking-app.vercel.app');
+
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
+
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
         res.status(422).json({message:"email is incorrect"})
     }
     if(userDoc){
@@ -116,6 +126,11 @@ app.post('/api/login',async(req,res)=>{
             })
             
         }else{
+            res.setHeader('Access-Control-Allow-Origin', 'https://front-booking-app.vercel.app');
+
+            res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
+
+            res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
             res.status(422).json({message:"password is incorrect"})
         }
     }
@@ -127,15 +142,30 @@ app.get('/api/profile', async(req,res)=>{
     const token = req.cookies.token
     if (token){
         const userData =await getUserDataFromCookies(req)
+        res.setHeader('Access-Control-Allow-Origin', 'https://front-booking-app.vercel.app');
+
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
+
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
         res.json(userData)
         
     }else{
+        res.setHeader('Access-Control-Allow-Origin', 'https://front-booking-app.vercel.app');
+
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
+
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
         res.status(401).json({message:"unauthorized"})
     }  
 })
 
 
 app.post('/api/logout', (req,res)=>{
+    res.setHeader('Access-Control-Allow-Origin', 'https://front-booking-app.vercel.app');
+
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
+
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
 
     res.clearCookie('token').json(true)
 })
@@ -150,6 +180,11 @@ app.post('/api/upload-with-link',async (req,res)=>{
         dest:'/tmp/'+ name
     });
     const url = await uploadToS3('/tmp/'+ name, name, mime.lookup('/tmp/'+ name))
+    res.setHeader('Access-Control-Allow-Origin', 'https://front-booking-app.vercel.app');
+
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
+
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.json(url)
 })
 
@@ -165,6 +200,11 @@ app.post('/api/upload',pictureMiddleware.array('pictures',100) ,async(req,res)=>
         
 
     }
+    res.setHeader('Access-Control-Allow-Origin', 'https://front-booking-app.vercel.app');
+
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
+
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.json(uploads)
 })
 
@@ -187,6 +227,11 @@ app.post("/api/place", (req,res)=>{
             description,perks,extraInfo,price,
             checkIn,checkOut,maxGuests
         })
+        res.setHeader('Access-Control-Allow-Origin', 'https://front-booking-app.vercel.app');
+
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
+
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
         res.json(placeDocs)
     })
     
@@ -199,6 +244,11 @@ app.get('/api/user-places', (req,res)=>{
     jwt.verify(token,process.env.JWTSECRET,{},async(err,decoded)=>{
         const {id}= decoded;
         const places = await Place.find({owner:id})
+        res.setHeader('Access-Control-Allow-Origin', 'https://front-booking-app.vercel.app');
+
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
+
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
         res.json(places)
     })
 })
@@ -208,6 +258,11 @@ app.get('/api/user-places', (req,res)=>{
 app.get('/api/places/:id', async (req,res)=>{
     mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true} );
     const {id}= req.params
+    res.setHeader('Access-Control-Allow-Origin', 'https://front-booking-app.vercel.app');
+
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
+
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.json(await Place.findById(id))
 })
 
@@ -229,7 +284,11 @@ app.put('/api/place',(req,res)=>{
             description,perks,extraInfo,price,
             checkIn,checkOut,maxGuests
         })
-   
+        res.setHeader('Access-Control-Allow-Origin', 'https://front-booking-app.vercel.app');
+
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
+
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
         res.json(placeDoc)
         
     })
@@ -241,12 +300,22 @@ app.delete('/api/place/:id',async(req,res)=>{
     const {id}= req.params
     console.log(id)
     const userData=await getUserDataFromCookies(req)
+    res.setHeader('Access-Control-Allow-Origin', 'https://front-booking-app.vercel.app');
+
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
+
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.json(await Place.deleteOne({_id:id, owner:userData.id}))
 })
 
 
 app.get('/api/places',async(req,res)=>{
     mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true} );
+    res.setHeader('Access-Control-Allow-Origin', 'https://front-booking-app.vercel.app');
+
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
+
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.json(await Place.find())
 })
 
@@ -262,6 +331,11 @@ app.get('/api/room/:id', async (req,res)=>{
     }
 
     const place= await Place.findById(id)
+    res.setHeader('Access-Control-Allow-Origin', 'https://front-booking-app.vercel.app');
+
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
+
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.json([place,dates])
 });
 
@@ -274,6 +348,11 @@ app.post('/api/booking',  async(req,res)=>{
 
     Booking.create({place,checkIn,checkOut,numberOfGuests,name,phone,price,user:userData.id
     }).then((doc)=>{
+        res.setHeader('Access-Control-Allow-Origin', 'https://front-booking-app.vercel.app');
+
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
+
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
         res.json(doc)
     }).catch((err=>{
         console.error(err)
@@ -286,6 +365,11 @@ app.get('/api/bookings',  async (req,res)=>{
     const userData=await getUserDataFromCookies(req)
     
     const response= await Booking.find({user:userData.id}).populate('place')
+    res.setHeader('Access-Control-Allow-Origin', 'https://front-booking-app.vercel.app');
+
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
+
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     
     res.json(response)
 
@@ -297,6 +381,9 @@ app.delete('/api/booking/:id',async(req,res)=>{
     const {id}= req.params
     console.log(id)
     const userData=await getUserDataFromCookies(req)
+    res.setHeader('Access-Control-Allow-Origin', 'https://front-booking-app.vercel.app');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.json(await Booking.deleteOne({_id:id, user:userData.id}))
 })
 
