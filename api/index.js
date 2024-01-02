@@ -22,7 +22,7 @@ require('dotenv').config();
 app.use('/uploads',express.static(__dirname+'/uploads'));
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({ origin: 'https://front-booking-app.vercel.app/' , credentials :  true,  methods: 'GET,PUT,POST,OPTIONS,Delete', allowedHeaders: 'Content-Type,Authorization' }));
+app.use(cors({ origin: 'https://front-booking-app.vercel.app' , credentials :  true,  methods: 'GET,PUT,POST,OPTIONS,Delete', allowedHeaders: 'Content-Type,Authorization' }));
 const uri = process.env.MONGO_URL
 
 function getUserDataFromCookies (req){
