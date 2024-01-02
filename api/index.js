@@ -24,8 +24,8 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
     cors({ 
-            origin:"*" ,
-            credentials :  true,
+            origin:"*" 
+            
          }));
 const uri = process.env.MONGO_URL
 
@@ -208,8 +208,10 @@ app.get('/api/user-places', (req,res)=>{
     jwt.verify(token,process.env.JWTSECRET,{},async(err,decoded)=>{
         const {id}= decoded;
         const places = await Place.find({owner:id})
-        
-        res.appendHeader('Access-Control-Allow-Origin','https://front-booking-app.vercel.app/').json(places)
+        console.log(res.getHeaders())
+        res.setHeader('Access-Control-Allow-Origin','https://front-booking-app.vercel.app').json(places)
+        console.log(res.getHeaders())
+
     })
 })
 
