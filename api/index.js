@@ -209,7 +209,7 @@ app.get('/api/user-places', (req,res)=>{
         const {id}= decoded;
         const places = await Place.find({owner:id})
         
-        res.json(places)
+        res.appendHeader('Access-Control-Allow-Origin','https://front-booking-app.vercel.app/').json(places)
     })
 })
 
