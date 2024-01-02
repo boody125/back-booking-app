@@ -22,7 +22,11 @@ require('dotenv').config();
 app.use('/uploads',express.static(__dirname+'/uploads'));
 app.use(express.json());
 app.use(cookieParser());
-
+app.use(
+    cors({ 
+            origin:"*" ,
+            credentials :  true,
+         }));
 const uri = process.env.MONGO_URL
 
 function getUserDataFromCookies (req){
@@ -71,11 +75,6 @@ app.get('/api/test',(req,res)=>{
 
 app.post('/api/register',async(req,res)=>{
     mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true} );
-    res.setHeader('Access-Control-Allow-Origin', 'https://front-booking-app.vercel.app');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    
-
     const {name,email,password}=req.body
 
     try {
@@ -97,10 +96,6 @@ app.post('/api/register',async(req,res)=>{
 
 app.post('/api/login',async(req,res)=>{
     mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true} );
-    res.setHeader('Access-Control-Allow-Origin', 'https://front-booking-app.vercel.app');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    
     const {email,password}=req.body
     const userDoc =await User.findOne({email:email})
     
@@ -132,9 +127,6 @@ app.post('/api/login',async(req,res)=>{
 
 app.get('/api/profile', async(req,res)=>{
     mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true} );
-    res.setHeader('Access-Control-Allow-Origin', 'https://front-booking-app.vercel.app');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     const token = req.cookies.token
     if (token){
         const userData =await getUserDataFromCookies(req)
@@ -149,18 +141,13 @@ app.get('/api/profile', async(req,res)=>{
 
 
 app.post('/api/logout', (req,res)=>{
-    res.setHeader('Access-Control-Allow-Origin', 'https://front-booking-app.vercel.app');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    
 
     res.clearCookie('token').json(true)
 })
 
 
 app.post('/api/upload-with-link',async (req,res)=>{
-    res.setHeader('Access-Control-Allow-Origin', 'https://front-booking-app.vercel.app');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     
     const {link} = req.body
     const name = Date.now() + ".jpeg"
@@ -176,9 +163,6 @@ app.post('/api/upload-with-link',async (req,res)=>{
 const pictureMiddleware= multer({dest:'tmp'})
 
 app.post('/api/upload',pictureMiddleware.array('pictures',100) ,async(req,res)=>{
-    res.setHeader('Access-Control-Allow-Origin', 'https://front-booking-app.vercel.app');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     const uploads =[]
     for (let i=0 ; i<req.files.length; i++){
         const {path,originalname,mimetype}= req.files[i]
@@ -194,9 +178,6 @@ app.post('/api/upload',pictureMiddleware.array('pictures',100) ,async(req,res)=>
 
 app.post("/api/place", (req,res)=>{
     mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true} );
-    res.setHeader('Access-Control-Allow-Origin', 'https://front-booking-app.vercel.app');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     const token = req.cookies.token
     const {
         title,address,addedPhotos,
@@ -223,9 +204,6 @@ app.post("/api/place", (req,res)=>{
 
 app.get('/api/user-places', (req,res)=>{
     mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true} );
-    res.setHeader('Access-Control-Allow-Origin', 'https://front-booking-app.vercel.app');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     const token = req.cookies.token
     jwt.verify(token,process.env.JWTSECRET,{},async(err,decoded)=>{
         const {id}= decoded;
@@ -239,9 +217,6 @@ app.get('/api/user-places', (req,res)=>{
 
 app.get('/api/places/:id', async (req,res)=>{
     mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true} );
-    res.setHeader('Access-Control-Allow-Origin', 'https://front-booking-app.vercel.app');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     const {id}= req.params
     
     res.json(await Place.findById(id))
@@ -250,9 +225,6 @@ app.get('/api/places/:id', async (req,res)=>{
 
 app.put('/api/place',(req,res)=>{
     mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true} );
-    res.setHeader('Access-Control-Allow-Origin', 'https://front-booking-app.vercel.app');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     const token = req.cookies.token;
     const {
         id,
@@ -277,9 +249,6 @@ app.put('/api/place',(req,res)=>{
 
 app.delete('/api/place/:id',async(req,res)=>{
     mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true} );
-    res.setHeader('Access-Control-Allow-Origin', 'https://front-booking-app.vercel.app');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     const {id}= req.params
     console.log(id)
     const userData=await getUserDataFromCookies(req)
@@ -290,9 +259,6 @@ app.delete('/api/place/:id',async(req,res)=>{
 
 app.get('/api/places',async(req,res)=>{
     mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true} );
-    res.setHeader('Access-Control-Allow-Origin', 'https://front-booking-app.vercel.app');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     
     res.json(await Place.find())
 })
@@ -301,9 +267,6 @@ app.get('/api/places',async(req,res)=>{
 
 app.get('/api/room/:id', async (req,res)=>{
     mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true} );
-    res.setHeader('Access-Control-Allow-Origin', 'https://front-booking-app.vercel.app');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     const {id}= req.params
     const response= await Booking.find({place:id})
     const dates =[]
@@ -319,9 +282,6 @@ app.get('/api/room/:id', async (req,res)=>{
 
 app.post('/api/booking',  async(req,res)=>{
     mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true} );
-    res.setHeader('Access-Control-Allow-Origin', 'https://front-booking-app.vercel.app');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     const userData=await getUserDataFromCookies(req)
     const {place,checkIn,checkOut,numberOfGuests,name,phone,price}
     =  req.body
@@ -338,9 +298,6 @@ app.post('/api/booking',  async(req,res)=>{
 
 app.get('/api/bookings',  async (req,res)=>{
     mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true} );
-    res.setHeader('Access-Control-Allow-Origin', 'https://front-booking-app.vercel.app');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     const userData=await getUserDataFromCookies(req)
     
     const response= await Booking.find({user:userData.id}).populate('place')
@@ -353,9 +310,6 @@ app.get('/api/bookings',  async (req,res)=>{
 
 app.delete('/api/booking/:id',async(req,res)=>{
     mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true} );
-    res.setHeader('Access-Control-Allow-Origin', 'https://front-booking-app.vercel.app');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     const {id}= req.params
     console.log(id)
     const userData=await getUserDataFromCookies(req)
