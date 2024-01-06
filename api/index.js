@@ -20,11 +20,12 @@ const bcryptSalt= bcrypt.genSaltSync(10);
 const bucket='booking-app-abdo'
 require('dotenv').config();
 app.use('/uploads',express.static(__dirname+'/uploads'));
-const allowOrigins = ["https://front-booking-app.vercel.app"]
+const allowOrigins = ["https://front-booking-app.vercel.app","https://front-booking-app.vercel.app/account"]
 const corsOptions = {
     credentials:true,
     origin : function (origin, cb){
         if (!origin || allowOrigins.includes(origin)){
+            
             cb(null, true)
         }else {
             cb (new Error('not allowed by cors :'+ origin))
