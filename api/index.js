@@ -20,16 +20,18 @@ const bcryptSalt= bcrypt.genSaltSync(10);
 const bucket='booking-app-abdo'
 require('dotenv').config();
 app.use('/uploads',express.static(__dirname+'/uploads'));
-const allowOrigins = ["https://front-booking-app.vercel.app","https://front-booking-app.vercel.app/account"]
+const allowOrigins = ["http://192.168.1.2:5173","https://front-booking-app.vercel.app","https://front-booking-app.vercel.app/account"]
+
 const corsOptions = {
     credentials:true,
     origin : function (origin, cb){
         
         if (!origin || allowOrigins.includes(origin)){
-            console.log(origin)
+            console.log("there is an origin" + " " + origin)
             cb(null, true)
         }else {
-            console.log(origin)
+            console.log("there is nooooo origin")
+        
             cb (new Error('not allowed by cors :'+ origin))
         }
     }
@@ -222,9 +224,7 @@ app.get('/api/user-places', (req,res)=>{
     jwt.verify(token,process.env.JWTSECRET,{},async(err,decoded)=>{
         const {id}= decoded;
         const places = await Place.find({owner:id})
-        console.log(res.getHeaders())
-        res.setHeader('Access-Control-Allow-Origin','https://front-booking-app.vercel.app').json(places)
-        console.log(res.getHeaders())
+        
 
     })
 })
@@ -266,7 +266,7 @@ app.put('/api/place',(req,res)=>{
 app.delete('/api/place/:id',async(req,res)=>{
     mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true} );
     const {id}= req.params
-    console.log(id)
+
     const userData=await getUserDataFromCookies(req)
     
     res.json(await Place.deleteOne({_id:id, owner:userData.id}))
@@ -327,7 +327,7 @@ app.get('/api/bookings',  async (req,res)=>{
 app.delete('/api/booking/:id',async(req,res)=>{
     mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true} );
     const {id}= req.params
-    console.log(id)
+
     const userData=await getUserDataFromCookies(req)
     
     res.json(await Booking.deleteOne({_id:id, user:userData.id}))
