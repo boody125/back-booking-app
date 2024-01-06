@@ -36,7 +36,7 @@ const corsOptions = {
 }
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors(corsOptions));
+app.use(cors());
 app.use((req,res,next)=>{
     res.header('Access-Control-Allow-Credentials','true');
     next();
