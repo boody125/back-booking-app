@@ -24,10 +24,12 @@ const allowOrigins = ["https://front-booking-app.vercel.app","https://front-book
 const corsOptions = {
     credentials:true,
     origin : function (origin, cb){
+        console.log(origin)
         if (!origin || allowOrigins.includes(origin)){
-            
+            console.log(origin)
             cb(null, true)
         }else {
+            console.log(origin)
             cb (new Error('not allowed by cors :'+ origin))
         }
     }
