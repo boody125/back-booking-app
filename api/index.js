@@ -47,6 +47,7 @@ const uri = process.env.MONGO_URL
 
 function getUserDataFromCookies (req){
     return new Promise(function(resolve, rejects) {
+        console.log(" token: "+req.cookies.token+" secret: "+process.env.JWTSECRET)
         jwt.verify(req.cookies.token,process.env.JWTSECRET,{},async(err,decoded)=>{
             if (err) throw err;
             resolve(decoded)
@@ -298,7 +299,9 @@ app.get('/api/room/:id', async (req,res)=>{
 
 app.post('/api/booking',  async(req,res)=>{
     mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true} );
+    console.log()
     const userData=await getUserDataFromCookies(req)
+    console.log(userData)
     const {place,checkIn,checkOut,numberOfGuests,name,phone,price}
     =  req.body
 
