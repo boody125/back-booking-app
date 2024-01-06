@@ -133,7 +133,8 @@ app.post('/api/login',async(req,res)=>{
                 if (err) throw err
                 console.log('token : '+token)
                 const cookieOptions={
-                    sameSite:'none'
+                    sameSite:'none',
+                    secure:true
                 }
                 res.cookie('token',token,cookieOptions).json(userDoc)
             })
