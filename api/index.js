@@ -20,14 +20,24 @@ const bcryptSalt= bcrypt.genSaltSync(10);
 const bucket='booking-app-abdo'
 require('dotenv').config();
 app.use('/uploads',express.static(__dirname+'/uploads'));
+const allowOrigins = ["https://front-booking-app.vercel.app"]
+const corsOptions = {
+    credentials:true,
+    origin : function (origin, cb){
+        if (!origin || allowOrigins.includes(origin)){
+            cb(null, true)
+        }else {
+            cb (new Error('not allowed by cors :'+ origin))
+        }
+    }
+}
 app.use(express.json());
 app.use(cookieParser());
-app.use(
-    cors({ 
-            origin:"https://front-booking-app.vercel.app" ,
-            credentials :  true,
-            preflightContinue:true
-         }));
+app.use(cors(corsOptions));
+app.use((req,res,next)=>{
+    res.header('Access-Control-Allow-Credentials','true');
+    next();
+})
 const uri = process.env.MONGO_URL
 
 function getUserDataFromCookies (req){
