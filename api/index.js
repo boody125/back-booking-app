@@ -131,8 +131,8 @@ app.post('/api/login',async(req,res)=>{
                 process.env.JWTSECRET, 
                 {}, (err,token)=>{
                 if (err) throw err
-                console.log('token : token')
-                res.cookie('token',token).json(userDoc)
+                console.log('token : '+token)
+                res.cookie('token',token).json(userDoc).then(()=>console.log("success "+ token)
             })
             
         }else{
