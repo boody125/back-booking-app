@@ -22,6 +22,10 @@ require('dotenv').config();
 app.use('/uploads',express.static(__dirname+'/uploads'));
 const allowOrigins = ["http://192.168.1.2:5173","https://front-booking-app.vercel.app","https://front-booking-app.vercel.app/account"]
 
+const cookieOptions={
+    sameSite:'none',
+    secure:true
+}
 const corsOptions = {
     credentials:true,
     origin : function (origin, cb){
@@ -131,11 +135,7 @@ app.post('/api/login',async(req,res)=>{
                 process.env.JWTSECRET, 
                 {}, (err,token)=>{
                 if (err) throw err
-                console.log('token : '+token)
-                const cookieOptions={
-                    sameSite:'none',
-                    secure:true
-                }
+                
                 res.cookie('token',token,cookieOptions).json(userDoc)
             })
             
@@ -165,7 +165,7 @@ app.get('/api/profile', async(req,res)=>{
 app.post('/api/logout', (req,res)=>{
     
 
-    res.clearCookie('token').json(true)
+    res.clearCookie('token',cookieOptions).json(true)
 })
 
 
