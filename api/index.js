@@ -132,7 +132,10 @@ app.post('/api/login',async(req,res)=>{
                 {}, (err,token)=>{
                 if (err) throw err
                 console.log('token : '+token)
-                res.cookie('token',token).json(userDoc).then(()=>console.log("success "+ token))
+                const cookieOptions={
+                    sameSite:'none'
+                }
+                res.cookie('token',token,cookieOptions).json(userDoc)
             })
             
         }else{
