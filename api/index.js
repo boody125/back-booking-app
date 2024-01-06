@@ -131,6 +131,7 @@ app.post('/api/login',async(req,res)=>{
                 process.env.JWTSECRET, 
                 {}, (err,token)=>{
                 if (err) throw err
+                console.log('token : token')
                 res.cookie('token',token).json(userDoc)
             })
             
@@ -299,9 +300,9 @@ app.get('/api/room/:id', async (req,res)=>{
 
 app.post('/api/booking',  async(req,res)=>{
     mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true} );
-    console.log()
+    
     const userData=await getUserDataFromCookies(req)
-    console.log(userData)
+    
     const {place,checkIn,checkOut,numberOfGuests,name,phone,price}
     =  req.body
 
